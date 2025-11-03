@@ -1,2 +1,0 @@
-/usr/bin/ar qc libplate_recognition.a CMakeFiles/plate_recognition.dir/src/main.cpp.o CMakeFiles/plate_recognition.dir/src/plate_recognition.cpp.o
-/usr/bin/ranlib libplate_recognition.a

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libyolov5_plate.a CMakeFiles/yolov5_plate.dir/src/main.cpp.o CMakeFiles/yolov5_plate.dir/src/platedetector_yolov5.cpp.o
-/usr/bin/ranlib libyolov5_plate.a
