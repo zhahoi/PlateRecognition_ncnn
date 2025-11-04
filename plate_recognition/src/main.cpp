@@ -5,63 +5,27 @@
 #include <vector>
 #include <string>
 #include <opencv2/opencv.hpp>
-#include <dirent.h>
+#include <filesystem>
 
-std::string getHouZhui(std::string fileName)
+namespace fs = std::filesystem;
+
+// 用于读取指定文件夹下特定类型文件
+void readFileList(const std::string& path, std::vector<std::string>& fileList, const std::vector<std::string>& extensions)
 {
-    int pos = fileName.find_last_of(std::string("."));
-    std::string houZui = fileName.substr(pos + 1);
-    return houZui;
-}
-
-int readFileList(char *basePath, std::vector<std::string> &fileList, std::vector<std::string> fileType)
-{
-    DIR *dir;
-    struct dirent *ptr;
-    char base[1000];
-
-    if ((dir = opendir(basePath)) == NULL)
+    fileList.clear();
+    for (const auto& entry : fs::directory_iterator(path))
     {
-        perror("Open dir error...");
-        exit(1);
-    }
-
-    while ((ptr = readdir(dir)) != NULL)
-    {
-        if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)    ///current dir OR parrent dir
-            continue;
-        else if (ptr->d_type == 8)
-        {   ///file
-            if (fileType.size())
-            {
-                std::string houZui = getHouZhui(std::string(ptr->d_name));
-                for (auto &s : fileType)
-                {
-                    if (houZui == s)
-                    {
-                        fileList.push_back(std::string(basePath) + "/" + std::string(ptr->d_name));
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                fileList.push_back(std::string(basePath) + "/" + std::string(ptr->d_name));
-            }
-        }
-        else if (ptr->d_type == 10)    ///link file
-            printf("d_name:%s/%s\n", basePath, ptr->d_name);
-        else if (ptr->d_type == 4)    ///dir
+        if (!entry.is_regular_file()) continue;
+        std::string ext = entry.path().extension().string();
+        for (auto& e : extensions)
         {
-            memset(base, '\0', sizeof(base));
-            strcpy(base, basePath);
-            strcat(base, "/");
-            strcat(base, ptr->d_name);
-            readFileList(base, fileList, fileType);
+            if (ext == "." + e)
+            {
+                fileList.push_back(entry.path().string());
+                break;
+            }
         }
     }
-    closedir(dir);
-    return 1;
 }
 
 int main()
@@ -71,11 +35,11 @@ int main()
     int string_index = 0;
     double time_count = 0.0;
     
-    std::string imagepath = "/home/dell/Code/c++/PlateRecognition_detect/data";
+    std::string imagepath = "../data";
     std::vector<std::string> imagList;
     std::vector<std::string> fileType{"jpg", "png"};
     
-    readFileList(const_cast<char *>(imagepath.c_str()), imagList, fileType);
+    readFileList(imagepath, imagList, fileType);
 
     std::cout << "Found " << imagList.size() << " images to process." << std::endl;
 
@@ -94,10 +58,9 @@ int main()
         time_count += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
         
         if (ret == 0) {
-            // 关键：强制刷新输出缓冲区
-            std::cout.flush();
-            std::cout << "Image: " << imagList[i] << " - plate: " << plate_num << " plate_color: " << plate_color << std::endl;
-            std::cout.flush(); // 再次刷新确保输出
+            std::cout << "Image: " << imagList[i] 
+                      << " - plate: " << plate_num 
+                      << " plate_color: " << plate_color << std::endl;
         }
     }
     

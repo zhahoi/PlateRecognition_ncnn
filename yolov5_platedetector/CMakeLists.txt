@@ -56,3 +56,13 @@ target_link_libraries(
 target_include_directories(yolov5_plate PUBLIC
     ${PROJECT_SOURCE_DIR}/include
 )
+
+# 可执行文件
+add_executable(yolov5_plate_app ${SOURCE_FILES})
+
+target_link_libraries(
+    yolov5_plate_app
+    ${OpenCV_LIBS}
+    ncnn
+    OpenMP::OpenMP_CXX
+)

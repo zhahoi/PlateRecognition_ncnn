@@ -56,3 +56,12 @@ target_link_libraries(
 target_include_directories(plate_recognition PUBLIC
     ${PROJECT_SOURCE_DIR}/include
 )
+
+# 生成可执行文件
+add_executable(plate_recognition_app src/main.cpp src/plate_recognition.cpp)
+
+target_link_libraries(
+    plate_recognition_app
+    ${OpenCV_LIBS}
+    ncnn
+)
