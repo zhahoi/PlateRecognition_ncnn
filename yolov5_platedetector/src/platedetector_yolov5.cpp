@@ -171,7 +171,6 @@ int Detector_Yolov5plate::detect(const cv::Mat& rgb, std::vector<Detection_Yolov
                           ncnn::BORDER_CONSTANT, 114.f);
 
     // 归一化 (除以255)
-    const float norm_vals[3] = {1.f/255.f, 1.f/255.f, 1.f/255.f};
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // 推理

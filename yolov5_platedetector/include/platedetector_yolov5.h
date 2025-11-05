@@ -28,7 +28,6 @@ class Detector_Yolov5plate
 {
 public:
     Detector_Yolov5plate();
-
     ~Detector_Yolov5plate();
 
     int detect(const cv::Mat& rgb, std::vector<Detection_Yolov5>& objects);
